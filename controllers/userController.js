@@ -6,14 +6,10 @@ module.exports = {
         try {
             const users = await User.find();
 
-            const userObj = {
-                users,
-                totalUsers: await totalUsers(),
-            };
-            res.json(userObj);
+            res.json(users);
         } catch (err) {
             console.log(err);
-            res.statuts(500).json(err);
+            res.status(500).json(err);
         }
     },
     async getUserById(req, res) {
@@ -65,7 +61,7 @@ module.exports = {
     },
     async deleteUser(req, res) {
         try {
-            const user = await User.findOneAndDelete({ _id: req.params.userID });
+            const user = await User.findOneAndRemove({ _id: req.params.userID });
             if (!user) {
                 return res.status(404).json({ message: 'No user with this id!' });
             }
@@ -92,16 +88,19 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    async deleteFriend(req, res) {
+    async removeFriend(req, res) {
         try {
-            const user = await User.findOneAndUpdate(
-                { _id: req.params.id },
-                { $pull: { friends: req.body } },
-                { runValidators: true, new: true }
-            );
+            const user = await User.findOneAndRemove({ _id: req.params.userID });
+
             if (!user) {
                 return res.status(404).json({ message: 'No user with this id!' });
             }
+            const friend = await User.findOneAndUpdate(
+                { friend: req.params.UserID },
+                { $pull: { friend: req.params.UserID } },
+                { new: true }
+            );
+
             res.json({ message: 'Friend deleted!' });
         } catch (err) {
             console.log(err);

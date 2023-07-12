@@ -1,11 +1,6 @@
-const { Schema, Types } = require("mongoose");
-const thoughtSchema = require("./Thought");
+const { Schema, model } = require("mongoose");
 
 const UserSchema = new Schema({
-    user_id: {
-        type: Schema.Types.ObjectId,
-        default: () => new Types.ObjectId()
-    },
     username: {
         type: String,
         unique: true,
@@ -14,7 +9,7 @@ const UserSchema = new Schema({
     },
     email: {
         type: String,
-        required,
+        required: true,
         unique: true,
         match: [/.+@.+\..+/],
     },
@@ -30,7 +25,6 @@ const UserSchema = new Schema({
             ref: "User",
         },
     ],
-    thoughtSchema: [thoughtSchema],
 },
     {
         toJSON: {
@@ -39,6 +33,12 @@ const UserSchema = new Schema({
         id: false,
     }
 );
+
+UserSchema
+    .virtual("friendCount")
+    .get(function () {
+        return this.friends.length;
+    });
 
 const User = model("User", UserSchema);
 
