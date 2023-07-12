@@ -1,26 +1,28 @@
 const { Schema, Types } = require('mongoose');
+const { getFormattedDate } = require('../utils/date');
 
 const ReactionSchema = new Schema(
     {
         reactionId: {
             type: Schema.Types.ObjectId,
-            default: () => new Types.ObjectId()
+            default: () => new Types.ObjectId(),
         },
         reactionBody: {
             type: String,
             required: true,
-            maxLength: 280
+            maxLength: 280,
         },
         username: {
             type: String,
-            required: true
+            required: true,
         },
         createdAt: {
-            type: Date,
-            default: Date.now,
+            type: String,
+            default: getFormattedDate,
         },
     },
     {
+        timestamps: true,
         toJSON: {
             getters: true,
         },
